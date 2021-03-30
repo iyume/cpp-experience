@@ -1,0 +1,20 @@
+POST /exp/doexpDesktopReport.jsp?doUpload=true&envParam=VGIHgb3px3MEMN91kTqKsw HTTP/1.1
+Host: 10.34.67.241
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:84.0) Gecko/20100101 Firefox/84.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: zh-CN,en-US;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=---------------------------318824175760863543484571581
+Content-Length: 229
+Origin: http://10.34.67.241
+Connection: close
+Referer: http://10.34.67.241/exp/doexpDesktopReport.jsp?envParam=VGIHgb3px3MEMN91kTqKsw
+Cookie: JSESSIONID=22EBA3C52A43E23E8EF9FE51697B069A
+Upgrade-Insecure-Requests: 1
+
+-----------------------------318824175760863543484571581
+Content-Disposition: form-data; name="reportname"; filename="empty.doc"
+Content-Type: application/msword
+
+
+-----------------------------318824175760863543484571581--

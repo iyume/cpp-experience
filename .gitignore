@@ -1,0 +1,7 @@
+*.exe
+*.docx*
+*.doc*
+*.xls*
+.vscode
+__pycache__
+test.*
