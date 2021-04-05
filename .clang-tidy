@@ -12,7 +12,7 @@ Checks:
 -modernize-use-trailing-return-type,
 -readability-avoid-const-params-in-decls,
 -readability-simplify-boolean-expr,
--llvmlibc-*
+-llvmlibc*
 '
 
 InheritParentConfig: true

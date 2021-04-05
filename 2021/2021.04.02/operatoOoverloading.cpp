@@ -1,51 +1,50 @@
 // 第 10 章第 3 题
 #include <iostream>
-using namespace std;
+using std::ostream;
+using std::cout;
+using std::endl;
 
 class Complex
 {
 public:
-    Complex(int r = 0, int i = 0) : real(r), imagine(i){};
-    Complex operator+(const Complex &c)
+    explicit Complex(int r = 0, int i = 0) : m_real(r), m_imagine(i){};
+    Complex operator+(const Complex &c) const
     {
-        return Complex(real + c.real, imagine + c.imagine);
+        return Complex(m_real + c.m_real, m_imagine + c.m_imagine);
     };
-    Complex operator+(const int &i)
+    Complex operator+(const int &i) const
     {
-        return Complex(real + i, imagine);
+        return Complex(m_real + i, m_imagine);
     };
     void operator+=(const Complex &c)
     {
-        real += c.real;
-        imagine += c.imagine;
+        m_real += c.m_real;
+        m_imagine += c.m_imagine;
     };
     friend Complex operator+(int i, const Complex &c)
     {
-        return Complex(i + c.real, c.imagine);
+        return Complex(i + c.m_real, c.m_imagine);
     };
-    int get_real() const
+    friend ostream& operator<<(ostream &out, const Complex &c)
     {
-        return real;
-    }
-    int get_imagine() const
-    {
-        return imagine;
+        return out << '(' << c.m_real << ',' << c.m_imagine << 'i' << ')';
     };
 
 private:
-    int real;
-    int imagine;
-};
-
-ostream &operator<<(ostream &out, const Complex &c)
-{
-    return out << '(' << c.get_real() << ',' << c.get_imagine() << 'i' << ')';
+    int m_real;
+    int m_imagine;
 };
 
 int main()
 {
-    Complex c1(3, 14), c2(5, -10), c3;
-    int i = 5;
+    const int c1_real = 3;
+    const int c1_imagine = 14;
+    const int c2_real = 5;
+    const int c2_imagine = -10;
+    Complex c1(c1_real, c1_imagine);
+    Complex c2(c2_real, c2_imagine);
+    Complex c3;
+    const int i = 5;
     cout << "c1+c2=" << c1 + c2 << endl;
     cout << "i+c1=" << i + c1 << endl;
     cout << "c1+i=" << c1 + i << endl;
