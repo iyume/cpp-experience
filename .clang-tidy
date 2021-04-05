@@ -1,0 +1,14 @@
+lint-comment:
+  lint-command
+  lint-command lint-args
+
+lint-args:
+  ( check-name-list )
+
+check-name-list:
+  check-name
+  check-name-list , check-name
+
+lint-command:
+  NOLINT
+  NOLINTNEXTLINE

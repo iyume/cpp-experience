@@ -3,5 +3,7 @@
 *.doc*
 *.xls*
 .vscode
+.vscode.windows
 __pycache__
 test.*
+.mypy_cache

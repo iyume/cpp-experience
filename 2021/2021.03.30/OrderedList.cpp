@@ -129,7 +129,7 @@ int main()
     int *age_list = new int[3]{13, 12, 11};
     char *sex_list = new char[3]{'F', 'M', 'M'};
     string *birth_date_list = new string[3]{"2000-03-12", "2001-03-01", "2000-06-21"};
-    OrderList linearList = OrderList<Form>();
+    OrderList<Form> linearList = OrderList<Form>();
     for (int i = 0; i < 3; i++)
     {
         defaultForm[i].name = name_list[i];
