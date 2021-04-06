@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include <typeinfo>
+#include <library/exceptions.h>
 using std::cout;
 using std::endl;
 using std::ostringstream;
@@ -23,8 +24,9 @@ void copyBackward(TT *arr_begin, TT *arr_end, TT *arr2_end) {
 
 template <class TT>
 void copyFrontward(TT *arr_begin, TT *arr_end, TT *arr2_begin) {
-  while (arr_begin != arr_end)
+  while (arr_begin != arr_end) {
     *(++arr2_begin) = *(++arr_begin);
+  }
 };
 
 template <class TT>
@@ -47,7 +49,24 @@ void changeArrayLength(TT *&old_array, int old_length, int new_length) {
 template <class TT> class OrderList {
 public:
   explicit OrderList(int init_len = kMInitLen);
+  OrderList(const OrderList &o1) {
+    for (int i = 0; i < m_listSize; i++) {
+      *(m_ptr + i) = *(o1.m_ptr + i);
+      m_arrayLength = o1.m_arrayLength;
+      m_listSize = o1.m_listSize;
+    }
+  };
   ~OrderList() { delete[] m_ptr; };
+  OrderList &operator=(const OrderList &ol1) {
+    if (&ol1 != this) {
+      // aviod self assign
+      delete[] m_ptr;
+      m_ptr = ol1.m_ptr;
+      m_arrayLength = ol1.m_arrayLength;
+      m_listSize = ol1.m_listSize;
+    };
+    return *this;
+  };
   void checkIndexExist(int index);
   void insert(int index, const TT &element);
   void erase(int index);
@@ -113,7 +132,7 @@ int main() {
   auto *name_list = new string[3]{"Amy", "Mike", "Jinale"};
   int *age_list = new int[3]{13, 12, 11};
   char *sex_list = new char[3]{'F', 'M', 'M'};
-  string *birth_date_list =
+  auto *birth_date_list =
       new string[3]{"2000-03-12", "2001-03-01", "2000-06-21"};
   OrderList<Form> linear_list = OrderList<Form>();
   for (int i = 0; i < 3; i++) {

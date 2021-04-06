@@ -1,7 +1,10 @@
 Checks:
 '*,
+-cppcoreguidelines-avoid-magic-numbers,
+-cppcoreguidelines-owning-memory,
 -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
 -cppcoreguidelines-pro-bounds-constant-array-index,
+-cppcoreguidelines-pro-bounds-pointer-arithmetic,
 -cppcoreguidelines-pro-type-vararg,
 -fuchsia-*,
 -google-readability-todo,
@@ -11,11 +14,12 @@ Checks:
 -hicpp-vararg,
 -modernize-use-trailing-return-type,
 -readability-avoid-const-params-in-decls,
+-readability-magic-numbers,
 -readability-simplify-boolean-expr,
 -llvmlibc*
 '
 
-InheritParentConfig: true
+InheritParentConfig: false
 
 CheckOptions:
   - { key: readability-identifier-naming.NamespaceCase,                value: lower_case }
