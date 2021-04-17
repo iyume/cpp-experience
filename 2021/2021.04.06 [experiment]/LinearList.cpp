@@ -6,13 +6,13 @@ using std::ostringstream;
 
 template <class TT>
 struct Node {
-    explicit Node(const TT& element) { this->element = element; };
-    Node(const TT& element, Node<TT>* next) {
-        this->element = element;
+    explicit Node(const TT& data) { this->data = data; };
+    Node(const TT& data, Node<TT>* next) {
+        this->data = data;
         this->next = next;
     };
 
-    TT element;
+    TT data;
     Node<TT>* next;
 };
 
@@ -21,20 +21,19 @@ class Chain {
   public:
     Chain();
     void checkIndex(int index);
-    int index(TT& element);  // get the index of element if matched
-    TT& get(int index);      // get element by node's index
-    void insert(int index, TT& element);
+    int index(TT& data);  // get the index of data if matched
+    TT& get(int index);   // get data by node's index
+    void append(TT& data);
+    void insert(int index, TT& data);
 
   private:
     Node<TT>* m_first_node;
-    Node<TT>* m_current_node;
     int m_size;
 };
 
 template <class TT>
 Chain<TT>::Chain() {
     m_first_node = nullptr;
-    m_current_node = nullptr;
     m_size = 0;
 };
 
@@ -49,10 +48,10 @@ void Chain<TT>::checkIndex(int index) {
 };
 
 template <class TT>
-int Chain<TT>::index(TT& element) {
+int Chain<TT>::index(TT& data) {
     Node<TT>* node_traverse = m_first_node;
     for (int i = 0; i < m_size; i++) {
-        if (node_traverse->element == element) {
+        if (node_traverse->data == data) {
             return i;
         };
         node_traverse = node_traverse->next;
@@ -67,34 +66,48 @@ TT& Chain<TT>::get(int index) {
     for (int i = 0; i < index; i++) {
         node_traverse = node_traverse->next;
     };
-    return node_traverse->element;
+    return node_traverse->data;
 };
 
 template <class TT>
-void Chain<TT>::insert(int index, TT& element) {
+void Chain<TT>::append(TT& data) {
+    if (m_size == 0) {
+        m_first_node = new Node<TT>(data);
+    } else {
+        auto* p = m_first_node;
+        for (int i = 0; i < m_size - 1; i++) {
+            p = p->next;
+        };
+        p->next = new Node<TT>(data);
+    };
+    m_size++;
+};
+
+template <class TT>
+void Chain<TT>::insert(int index, TT& data) {
     if (index < 0 || index > m_size)
         throw "invalid index to insert";
     if (index == 0) {
-        m_first_node = new Node<TT>(element);
+        m_first_node = new Node<TT>(data);
     } else {
         auto* p = m_first_node;
         for (int i = 0; i < index - 1; i++) {
             p = p->next;
         };
-        p->next = new Node<TT>(element);
+        p->next = new Node<TT>(data);
     };
     m_size++;
 };
 
 int main() {
     Chain<int> chain = Chain<int>();
-    int got_element = 0;
+    int got_data = 0;
     for (int i = 0; i < 5; i++) {
-        int element = i + 2;
-        chain.insert(i, element);
-        got_element = chain.get(i);
-        cout << "element: " << got_element << endl;
-        cout << "index: " << chain.index(got_element) << endl;
+        int data = i + 2;
+        chain.append(data);
+        got_data = chain.get(i);
+        cout << "data: " << got_data << endl;
+        cout << "index: " << chain.index(got_data) << endl;
     }
     return 0;
 }
