@@ -1,42 +1,35 @@
 // 第 10 章第 3 题
 #include <iostream>
-using std::ostream;
 using std::cout;
 using std::endl;
+using std::ostream;
 
-class Complex
-{
-public:
+class Complex {
+  public:
     explicit Complex(int r = 0, int i = 0) : m_real(r), m_imagine(i){};
-    Complex operator+(const Complex &c) const
-    {
+    Complex operator+(const Complex& c) const {
         return Complex(m_real + c.m_real, m_imagine + c.m_imagine);
     };
-    Complex operator+(const int &i) const
-    {
+    Complex operator+(const int& i) const {
         return Complex(m_real + i, m_imagine);
     };
-    void operator+=(const Complex &c)
-    {
+    void operator+=(const Complex& c) {
         m_real += c.m_real;
         m_imagine += c.m_imagine;
     };
-    friend Complex operator+(int i, const Complex &c)
-    {
+    friend Complex operator+(int i, const Complex& c) {
         return Complex(i + c.m_real, c.m_imagine);
     };
-    friend ostream& operator<<(ostream &out, const Complex &c)
-    {
+    friend ostream& operator<<(ostream& out, const Complex& c) {
         return out << '(' << c.m_real << ',' << c.m_imagine << 'i' << ')';
     };
 
-private:
+  private:
     int m_real;
     int m_imagine;
 };
 
-int main()
-{
+int main() {
     const int c1_real = 3;
     const int c1_imagine = 14;
     const int c2_real = 5;
