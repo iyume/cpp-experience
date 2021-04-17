@@ -10,3 +10,12 @@ Just currently what I think that cpp is a good language for its interesting and 
 
 Begin to produce beautiful and readable cpp code, not as a developer but as a neko.
 
+# Questions
+
+- Empty function declaration occur to object constructor call
+
+As a subsolution, write "void" into parameter in function declaration is thinked as redundant.
+
+In my opinion, separating the obj declaration and callable function is a good way.
+
+> Referer: [https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets](https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets)
