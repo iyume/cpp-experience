@@ -31,7 +31,7 @@ struct StudentHealthSheet {
 
 template <class TT>
 struct Node {
-    explicit Node(const TT& data) { this->data = data; };
+    explicit Node(const TT& data) : data(data) { this->data = data; };
     Node(const TT& data, Node<TT>* next) {
         this->data = data;
         this->next = next;
