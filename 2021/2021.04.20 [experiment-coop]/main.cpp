@@ -1,40 +1,25 @@
-#include <unistd.h>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 using std::cout;
 using std::endl;
 using std::ifstream;
 using std::istream;
+using std::ofstream;
 using std::ostream;
 using std::runtime_error;
 using std::string;
 using std::stringstream;
-namespace fs = std::filesystem;
-
-string getCWD() {
-    char abs_path[1024];
-    int cnt = readlink("/proc/self/exe", abs_path, 1024);
-    if (cnt < 0 || cnt >= 1024) {
-        return nullptr;
-    }
-    // remove exe program and return a directory
-    for (int i = cnt; i >= 0; --i) {
-        if (abs_path[i] == '/') {
-            abs_path[i + 1] = '\0';
-            break;
-        }
-    }
-    string path(abs_path);
-    return path;
-}
 
 template <class TT>
 struct Node {
-    explicit Node(const TT& data) : data(data) { this->data = data; };
+    explicit Node(const TT& data) : data(data), next(nullptr) {
+        this->data = data;
+        next = nullptr;
+    };
     Node(const TT& data, Node<TT>* next) {
         this->data = data;
         this->next = next;
@@ -49,7 +34,7 @@ class Chain {
   public:
     Chain();
     void checkIndex(int index);
-    int length() { return m_size; };
+    [[nodiscard]] int length() const { return m_size; };
     int index(TT& data);             // get the index of data if matched
     TT& get(int index);              // get data by node's index
     TT& getByStudentCode(int code);  // iter table, return matched record one
@@ -217,7 +202,7 @@ struct CSVRow {
     bool operator==(const CSVRow& r) const {
         // 重载 CSVRow 之间的比较运算符
         return (account == r.account && identity == r.identity &&
-                book == r.book && date == r.date)
+                book == r.book)
                    ? true
                    : false;
     };
@@ -229,31 +214,129 @@ struct CSVRow {
     CSVRow* next;
 };
 
-class CSVReader {
-  public:
-    explicit CSVReader(istream& s);
+struct CSVRowCombi {
+    CSVRowCombi() = default;
+    ;
+    CSVRowCombi(const CSVRow& row_lend, const CSVRow& row_return) {
+        // 参数 :row_lend: 借出
+        // 参数 :row_return: 归还
+        next = nullptr;
+        account = row_lend.account;
+        identity = row_lend.identity;
+        book = row_lend.book;
+        lend_date = row_lend.date;
+        return_date = row_return.date;
+    };
+    friend ostream& operator<<(ostream& out, const CSVRowCombi& rr) {
+        // 重载结构体 CSVRow 的流输出运算符
+        out << "account:      " << rr.account << endl;
+        out << "identity:     " << rr.identity << endl;
+        out << "book:         " << rr.book << endl;
+        out << "lend_date:    " << rr.lend_date << endl;
+        out << "return_date:  " << rr.return_date << endl;
+        return out;
+    };
+    friend ofstream& operator<<(ofstream& file, const CSVRowCombi& rr) {
+        // 输出到文件流
+        file << rr.account << ',';
+        file << rr.identity << ',';
+        file << rr.book << ',';
+        file << rr.lend_date << ',';
+        file << rr.return_date << endl;
+        return file;
+    };
 
-  private:
-    Chain<CSVRow> m_chain;
+    string account;
+    string identity;
+    string book;
+    string lend_date;
+    string return_date;
+    CSVRowCombi* next{};
 };
 
-CSVReader::CSVReader(istream& s) {
+template <class TT>
+class CSVReader {
+  public:
+    CSVReader() = default;
+    explicit CSVReader(istream& s);
+    // TT& begin() { return m_chain.get(0); };
+    TT& get(int index) { return m_chain.get(index); };
+    void append(TT& row) { m_chain.append(row); };
+    void display() const { m_chain.display(); };
+    [[nodiscard]] int size() const { return m_chain.length(); };
+    void scanToFile(string& filepath);
+
+  private:
+    Chain<TT> m_chain;
+};
+
+template <class TT>
+CSVReader<TT>::CSVReader(istream& s) {
     string cell;
     while (getline(s, cell, '\n')) {
         stringstream cell_buffer;
         cell_buffer << cell;
-        CSVRow row_obj(cell_buffer);
+        TT row_obj(cell_buffer);
         m_chain.append(row_obj);
     };
 };
 
+template <class TT>
+void CSVReader<TT>::scanToFile(string& filepath) {
+    ofstream file(filepath);
+    const int chain_size = size();
+    for (int i = 0; i < chain_size; i++) {
+        file << this->get(i);
+    };
+};
+
+CSVReader<CSVRowCombi> csvreaderCombiner(CSVReader<CSVRow>& reader1,
+                                        CSVReader<CSVRow>& reader2) {
+    // 合并两个 csv
+    CSVReader<CSVRowCombi> csvreader_combi;  // 初始化链表
+    for (int i = 0; i < reader1.size(); i++) {
+        for (int j = 0; j < reader2.size(); j++) {
+            try {
+                auto row1 = reader1.get(i);
+                auto row2 = reader2.get(j);
+                if (row1 == row2) {
+                    CSVRowCombi row_combi(row1, row2);
+                    csvreader_combi.append(row_combi);
+                }
+            } catch (const runtime_error& exc) {
+                cout << exc.what();
+            }
+        }
+    }
+    return csvreader_combi;
+};
+
 int main() {
-    fs::path cwd = getCWD();
-    auto filepath = cwd / "test" / "lend.csv";
-    string data;
-    ifstream file(filepath);
-    cout << "File path: " << filepath << endl;
-    CSVReader chain(file);
-    file.close();
+    // due to filesystem absolute path required c++17, impl downgrade to string
+    string file_lend_path = "./test/lend.csv";
+    string file_return_path = "./test/return.csv";
+    cout << "CSV lend file path: " << file_lend_path << endl;
+    cout << "CSV return file path: " << file_return_path << endl;
+    // 将借书表存为 chain_lend
+    ifstream filelend(file_lend_path);
+    CSVReader<CSVRow> chain_lend(filelend);
+    filelend.close();
+    // 将还书表存为 chain_return
+    ifstream filereturn(file_return_path);
+    CSVReader<CSVRow> chain_return(filereturn);
+    filereturn.close();
+    CSVReader<CSVRowCombi> chain_combi =
+        csvreaderCombiner(chain_lend, chain_return);
+    // cout << "链表::借出" << endl;
+    // chain_lend.display();
+    // cout << endl;
+    // cout << "链表::归还" << endl;
+    // chain_return.display();
+    // cout << endl;
+    // cout << "链表::合并" << endl;
+    // chain_combi.display();
+    // cout << endl;
+    string out_path = "./out.csv";
+    chain_combi.scanToFile(out_path);
     return 0;
 }
