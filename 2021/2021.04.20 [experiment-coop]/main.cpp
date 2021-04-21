@@ -314,6 +314,7 @@ CSVReader<CSVRowCombi> csvreaderCombiner(CSVReader<CSVRow>& reader1,
                     break;
                 };
                 if (j == reader2.size() - 1) {
+                    // 如果借书的行没有在还书记录找到，则设为`尚未归还`
                     CSVRowCombi row_combi(row1);
                     csvreader_combi.append(row_combi);
                 };
