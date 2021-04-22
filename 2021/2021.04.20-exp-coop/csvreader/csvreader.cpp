@@ -41,29 +41,29 @@ TT& Chain<TT>::get(int index) {
     return p->data;
 };
 
-template <class TT>
-TT& Chain<TT>::getByStudentCode(int code) {
-    Node<TT>* p = m_first_node;
-    for (int i = 0; i < m_size; i++) {
-        if ((p->data).code == code) {
-            return p->data;
-        };
-        p = p->next;
-    };
-    throw runtime_error("no matched student code\n");
-};
+// template <class TT>
+// TT& Chain<TT>::getByStudentCode(int code) {
+//     Node<TT>* p = m_first_node;
+//     for (int i = 0; i < m_size; i++) {
+//         if ((p->data).code == code) {
+//             return p->data;
+//         };
+//         p = p->next;
+//     };
+//     throw runtime_error("no matched student code\n");
+// };
 
-template <class TT>
-TT& Chain<TT>::getByStudentName(const std::string& name) {
-    Node<TT>* p = m_first_node;
-    for (int i = 0; i < m_size; i++) {
-        if ((p->data).name == name) {
-            return p->data;
-        };
-        p = p->next;
-    };
-    throw runtime_error("no matched student name\n");
-};
+// template <class TT>
+// TT& Chain<TT>::getByStudentName(const std::string& name) {
+//     Node<TT>* p = m_first_node;
+//     for (int i = 0; i < m_size; i++) {
+//         if ((p->data).name == name) {
+//             return p->data;
+//         };
+//         p = p->next;
+//     };
+//     throw runtime_error("no matched student name\n");
+// };
 
 template <class TT>
 void Chain<TT>::append(TT& data) {
@@ -197,6 +197,12 @@ ofstream& operator<<(ofstream& file, const CSVRowCombi& rr) {
     return file;
 };
 
+bool CSVRowCombi::operator==(const CSVRowCombi& r) const {
+    return (account == r.account && identity == r.identity && book == r.book)
+               ? true
+               : false;
+};
+
 template <class TT>
 CSVReader<TT>::CSVReader(istream& s) {
     string cell;
@@ -217,3 +223,9 @@ void CSVReader<TT>::scanToFile(string& filepath) {
     };
     file.close();
 };
+
+template class Chain<CSVRow>;
+template class Chain<CSVRowCombi>;
+
+template class CSVReader<CSVRow>;
+template class CSVReader<CSVRowCombi>;

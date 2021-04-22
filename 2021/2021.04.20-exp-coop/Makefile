@@ -1,25 +1,22 @@
 INCLUDES   = -I/home/iyume/workplace/cppwork/2021/2021.04.20-exp-coop
 CXX        = clang++
-CXXFLAGS   = -g -pthread ${INCLUDES}
-OBJS       = csvreader.o func.o
+CXXFLAGS   = -g -c -pthread ${INCLUDES}
+OBJS       = main.o csvreader.o func.o
 DEPS       = functions.h
 EXECUTABLE = math 
 
 
-main.exe: main.o
-	clang++ -o main.exe main.o
+main: ${OBJS}
+	${CXX} -o a.out ${OBJS}
 
-main.o: ${objects}
-	clang++ ${objects} -o main.o
+main.o:
+	clang++ ${CXXFLAGS} main.cpp
 
-csvreader.o: linearlist.o
-	(cd csvreader && clang++ -g -c -pthread csvreader.cpp)
-
-linearlist.o:
-	(cd linearlist && clang++ -g -c -pthread linearlist.cpp)
+csvreader.o:
+	${CXX} ${CXXFLAGS} csvreader/csvreader.cpp
 
 func.o:
-	(cd func && clang++ -g -c -pthread func.cpp)
+	${CXX} ${CXXFLAGS} func/func.cpp
 
 clean:
-	rm -f ${objects}
+	rm -f ${OBJS}

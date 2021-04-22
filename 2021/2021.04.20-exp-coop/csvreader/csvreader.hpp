@@ -51,12 +51,16 @@ struct CSVRow {
 
 struct CSVRowCombi {
     CSVRowCombi() = default;
+    explicit CSVRowCombi(istream& /*s*/) { next = nullptr; };
     explicit CSVRowCombi(const CSVRow& row_lend,
                          const CSVRow& row_return = CSVRow());
     friend ostream& operator<<(ostream& out, const CSVRowCombi& rr);
     // 重载结构体 CSVRow 的流输出运算符
     friend ofstream& operator<<(ofstream& file, const CSVRowCombi& rr);
     // 输出到文件流的运算符
+    bool operator==(const CSVRowCombi& r) const;
+    // 重载 CSVRow 之间的比较运算符
+    // 比较依据为 `account`, `identity`, `book`
 
     string account;
     string identity;
