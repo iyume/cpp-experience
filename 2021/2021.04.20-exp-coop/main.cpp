@@ -1,17 +1,6 @@
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-using std::cout;
-using std::endl;
-using std::ifstream;
-using std::istream;
-using std::ofstream;
-using std::ostream;
-using std::runtime_error;
-using std::string;
-using std::stringstream;
+#include "pch/pch.hpp"
+// #include "csvreader.hpp"
+// #include "func/func.hpp"
 
 template <class TT>
 struct Node {
@@ -31,7 +20,7 @@ class Chain {
     int index(TT& data);             // get the index of data if matched
     TT& get(int index);              // get data by node's index
     TT& getByStudentCode(int code);  // iter table, return matched record one
-    TT& getByStudentName(const string& name);  // return matched record one
+    TT& getByStudentName(const std::string& name);  // return matched record one
     void append(TT& data);
     void insert(int index, TT& data);
     void erase(int index);
@@ -40,6 +29,57 @@ class Chain {
   private:
     Node<TT>* m_first_node;
     int m_size;
+};
+
+struct CSVRow {
+    CSVRow() { next = nullptr; };
+    explicit CSVRow(istream& s);
+    friend ostream& operator<<(ostream& out, const CSVRow& rr);
+    // 重载结构体 CSVRow 的流输出运算符
+    friend ofstream& operator<<(ofstream& file, const CSVRow& rr);
+    // 输出到文件流的运算符
+    bool operator==(const CSVRow& r) const;
+    // 重载 CSVRow 之间的比较运算符
+    // 比较依据为 `account`, `identity`, `book`
+
+    string account;
+    string identity;
+    string book;
+    string date;
+    CSVRow* next;
+};
+
+struct CSVRowCombi {
+    CSVRowCombi() = default;
+    explicit CSVRowCombi(const CSVRow& row_lend,
+                         const CSVRow& row_return = CSVRow());
+    friend ostream& operator<<(ostream& out, const CSVRowCombi& rr);
+    // 重载结构体 CSVRow 的流输出运算符
+    friend ofstream& operator<<(ofstream& file, const CSVRowCombi& rr);
+    // 输出到文件流的运算符
+
+    string account;
+    string identity;
+    string book;
+    string lend_date;
+    string return_date;
+    CSVRowCombi* next{};
+};
+
+template <class TT>
+class CSVReader {
+  public:
+    CSVReader() = default;
+    explicit CSVReader(istream& s);
+    // TT& begin() { return m_chain.get(0); };
+    TT& get(int index) { return m_chain.get(index); };
+    void append(TT& row) { m_chain.append(row); };
+    void display() const { m_chain.display(); };
+    int size() { return m_chain.length(); };
+    void scanToFile(string& filepath);
+
+  private:
+    Chain<TT> m_chain;
 };
 
 template <class TT>
@@ -51,8 +91,8 @@ Chain<TT>::Chain() {
 template <class TT>
 void Chain<TT>::checkIndex(int index) {
     if (index < 0 || index >= m_size) {
-        stringstream exc;
-        exc << "*** Error ***" << endl;
+        std::stringstream exc;
+        exc << "*** Error ***" << std::endl;
         exc << "invalid index: " << index << endl;
         exc << "m_size: " << m_size << endl;
         exc << "*************" << endl;
@@ -96,7 +136,7 @@ TT& Chain<TT>::getByStudentCode(int code) {
 };
 
 template <class TT>
-TT& Chain<TT>::getByStudentName(const string& name) {
+TT& Chain<TT>::getByStudentName(const std::string& name) {
     Node<TT>* p = m_first_node;
     for (int i = 0; i < m_size; i++) {
         if ((p->data).name == name) {
@@ -175,106 +215,68 @@ void Chain<TT>::display() const {
     }
 };
 
-struct CSVRow {
-    CSVRow() { next = nullptr; };
-    explicit CSVRow(istream& s) {
-        // 参数 s: 单行数据，示例 `012345,2020440002,DK234,2011-6-5`
-        next = nullptr;
-        string cell;
-        getline(s, cell, ',');
-        account = cell;
-        getline(s, cell, ',');
-        identity = cell;
-        getline(s, cell, ',');
-        book = cell;
-        getline(s, cell, ',');
-        date = cell;
-    };
-    friend ostream& operator<<(ostream& out, const CSVRow& rr) {
-        // 重载结构体 CSVRow 的流输出运算符
-        out << "account:   " << rr.account << endl;
-        out << "identity:  " << rr.identity << endl;
-        out << "book:      " << rr.book << endl;
-        out << "date:      " << rr.date << endl;
-        return out;
-    };
-    friend ofstream& operator<<(ofstream& file, const CSVRow& rr) {
-        // 输出到文件流的运算符
-        file << rr.account << ',';
-        file << rr.identity << ',';
-        file << rr.book << ',';
-        file << rr.date << endl;
-        return file;
-    };
-    bool operator==(const CSVRow& r) const {
-        // 重载 CSVRow 之间的比较运算符
-        // 比较依据为 `account`, `identity`, `book`
-        return (account == r.account && identity == r.identity &&
-                book == r.book)
-                   ? true
-                   : false;
-    };
-
-    string account;
-    string identity;
-    string book;
-    string date;
-    CSVRow* next;
+CSVRow::CSVRow(istream& s) {
+    // 参数 s: 单行数据，示例 `012345,2020440002,DK234,2011-6-5`
+    next = nullptr;
+    string cell;
+    getline(s, cell, ',');
+    account = cell;
+    getline(s, cell, ',');
+    identity = cell;
+    getline(s, cell, ',');
+    book = cell;
+    getline(s, cell, ',');
+    date = cell;
 };
 
-struct CSVRowCombi {
-    CSVRowCombi() = default;
-    explicit CSVRowCombi(const CSVRow& row_lend,
-                         const CSVRow& row_return = CSVRow()) {
-        // 合并两行的数据
-        next = nullptr;
-        account = row_lend.account;
-        identity = row_lend.identity;
-        book = row_lend.book;
-        lend_date = row_lend.date;
-        return_date = row_return.date.empty() ? "尚未归还" : row_return.date;
-    };
-    friend ostream& operator<<(ostream& out, const CSVRowCombi& rr) {
-        // 重载结构体 CSVRow 的流输出运算符
-        out << "account:      " << rr.account << endl;
-        out << "identity:     " << rr.identity << endl;
-        out << "book:         " << rr.book << endl;
-        out << "lend_date:    " << rr.lend_date << endl;
-        out << "return_date:  " << rr.return_date << endl;
-        return out;
-    };
-    friend ofstream& operator<<(ofstream& file, const CSVRowCombi& rr) {
-        // 输出到文件流的运算符
-        file << rr.account << ',';
-        file << rr.identity << ',';
-        file << rr.book << ',';
-        file << rr.lend_date << ',';
-        file << rr.return_date << endl;
-        return file;
-    };
-
-    string account;
-    string identity;
-    string book;
-    string lend_date;
-    string return_date;
-    CSVRowCombi* next{};
+bool CSVRow::operator==(const CSVRow& r) const {
+    return (account == r.account && identity == r.identity && book == r.book)
+               ? true
+               : false;
 };
 
-template <class TT>
-class CSVReader {
-  public:
-    CSVReader() = default;
-    explicit CSVReader(istream& s);
-    // TT& begin() { return m_chain.get(0); };
-    TT& get(int index) { return m_chain.get(index); };
-    void append(TT& row) { m_chain.append(row); };
-    void display() const { m_chain.display(); };
-    int size() { return m_chain.length(); };
-    void scanToFile(string& filepath);
+ostream& operator<<(ostream& out, const CSVRow& rr) {
+    out << "account:   " << rr.account << endl;
+    out << "identity:  " << rr.identity << endl;
+    out << "book:      " << rr.book << endl;
+    out << "date:      " << rr.date << endl;
+    return out;
+};
 
-  private:
-    Chain<TT> m_chain;
+ofstream& operator<<(ofstream& file, const CSVRow& rr) {
+    file << rr.account << ',';
+    file << rr.identity << ',';
+    file << rr.book << ',';
+    file << rr.date << endl;
+    return file;
+};
+
+CSVRowCombi::CSVRowCombi(const CSVRow& row_lend, const CSVRow& row_return) {
+    // 合并两行的数据
+    next = nullptr;
+    account = row_lend.account;
+    identity = row_lend.identity;
+    book = row_lend.book;
+    lend_date = row_lend.date;
+    return_date = row_return.date.empty() ? "尚未归还" : row_return.date;
+};
+
+ostream& operator<<(ostream& out, const CSVRowCombi& rr) {
+    out << "account:      " << rr.account << endl;
+    out << "identity:     " << rr.identity << endl;
+    out << "book:         " << rr.book << endl;
+    out << "lend_date:    " << rr.lend_date << endl;
+    out << "return_date:  " << rr.return_date << endl;
+    return out;
+}
+
+ofstream& operator<<(ofstream& file, const CSVRowCombi& rr) {
+    file << rr.account << ',';
+    file << rr.identity << ',';
+    file << rr.book << ',';
+    file << rr.lend_date << ',';
+    file << rr.return_date << endl;
+    return file;
 };
 
 template <class TT>
@@ -300,7 +302,6 @@ void CSVReader<TT>::scanToFile(string& filepath) {
 
 CSVReader<CSVRowCombi> csvreaderCombiner(CSVReader<CSVRow>& reader1,
                                          CSVReader<CSVRow>& reader2) {
-    // 合并两个 csv
     CSVReader<CSVRowCombi> csvreader_combi;
     for (int i = 0; i < reader1.size(); i++) {
         for (int j = 0; j < reader2.size(); j++) {
