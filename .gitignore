@@ -2,6 +2,7 @@
 *.docx*
 *.doc*
 *.xls*
+*.pdf*
 .vscode
 .vscode.windows
 __pycache__
@@ -10,5 +11,8 @@ test.*
 *.out
 compile_flags.txt
 *.zip
+*.7z
+*.tar*
+*.rar
 post.py
 post.txt
