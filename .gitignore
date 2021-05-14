@@ -3,6 +3,8 @@
 *.doc*
 *.xls*
 *.pdf*
+*.ppt*
+*.pptx*
 .vscode
 .vscode.windows
 __pycache__
