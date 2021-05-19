@@ -1,4 +1,3 @@
-INCLUDES   = -I/home/iyume/workplace/cppwork/
 CXX        = clang++
 CXXFLAGS   = -g -c -pthread ${INCLUDES}
 OBJS       = main.o orderedCircularQueue.o

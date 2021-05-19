@@ -1,20 +1,32 @@
-*.exe
+# document file
 *.docx*
 *.doc*
 *.xls*
 *.pdf*
 *.ppt*
 *.pptx*
-.vscode
-.vscode.windows
-__pycache__
-test.*
-.mypy_cache
-*.out
+
+# workplace related
+.vscode/
+.vscode.*
 compile_flags.txt
-*.zip
-*.7z
+
+# cache
+__pycache__
+.mypy_cache
+
+# output folder / file
+build/
+*.exe
+*.out
+
+# backup file
+*.zip*
+*.7z*
 *.tar*
-*.rar
+*.rar*
+
+# test file
 post.py
 post.txt
+test.*

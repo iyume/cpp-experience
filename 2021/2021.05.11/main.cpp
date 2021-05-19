@@ -1,5 +1,5 @@
-#include "linkedCircularList.hpp"
-#include "pch.hpp"
+#include "lib/linkedCircularList.hpp"
+#include "lib/pch.hpp"
 using std::cout;
 using std::endl;
 
