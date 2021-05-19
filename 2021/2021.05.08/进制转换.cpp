@@ -4,6 +4,8 @@ using std::cin;
 using std::cout;
 using std::runtime_error;
 
+// 进制转换
+
 template <class TT>
 class Stack {
   public:

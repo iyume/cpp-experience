@@ -42,11 +42,11 @@ struct Matrix2R3C {
 int main() {
     Matrix2R3C matrix_a;
     Matrix2R3C matrix_b;
-    cout << "a=";
     cin >> matrix_a;
-    cout << "b=";
     cin >> matrix_b;
-    cout << "a+b=" << endl;
+    cout << "a:" << endl << matrix_a << endl;
+    cout << "b:" << endl << matrix_b << endl;
+    cout << "c=a+b:" << endl;
     cout << matrix_a + matrix_b;
     return 0;
 }

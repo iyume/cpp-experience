@@ -3,6 +3,8 @@
 using std::cout;
 using std::endl;
 
+// 约瑟夫环问题求解
+
 int main() {
     CircularChain<int> chain;
     const int test_n = 10;

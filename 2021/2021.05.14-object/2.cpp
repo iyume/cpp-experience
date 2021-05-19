@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <utility>
 using std::cout;
 using std::endl;
 using std::string;
@@ -7,14 +8,17 @@ using std::string;
 class Identity {
   public:
     Identity(int num, string name, char sex, string identity)
-        : m_num(num), m_name(name), m_sex(sex), m_identity(identity){};
+        : m_num(num),
+          m_name(std::move(name)),
+          m_sex(sex),
+          m_identity(std::move(identity)){};
     Identity(const Identity& idx) {
         m_num = idx.m_num;
         m_name = idx.m_name;
         m_sex = idx.m_sex;
         m_identity = idx.m_identity;
     };
-    void changeIdentity(string identity) { m_identity = identity; };
+    void changeIdentity(string identity) { m_identity = std::move(identity); };
     friend std::ostream& operator<<(std::ostream& out, const Identity& idx) {
         out << "num:" << idx.m_num << ',' << "name:" << idx.m_name << ','
             << "sex:" << idx.m_sex << ',' << "identity:" << idx.m_identity;
