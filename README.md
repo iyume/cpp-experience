@@ -12,6 +12,10 @@ In my opinion, separating the obj declaration and callable function is a good wa
 
 > Reference: [https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets](https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets)
 
+- Usage of Double Ampersand (T&&)
+
+Stay for update...
+
 # Note
 
 **compile flags (duplicated)**
