@@ -1,4 +1,51 @@
-#include "./csvreader.hpp"
+#pragma once
+
+#include "./pch.hpp"
+
+template <class TT>
+struct Node {
+    explicit Node(const TT data, Node<TT>* next = nullptr)
+        : data(data), next(next){};
+
+    TT data;
+    Node<TT>* next;
+};
+
+template <class TT>
+class Chain {
+  public:
+    Chain();
+    void checkIndex(int index);
+    int length() { return m_size; };
+    int index(TT& data);             // get the index of data if matched
+    TT& get(int index);              // get data by node's index
+    TT& getByStudentCode(int code);  // iter table, return matched record one
+    TT& getByStudentName(const std::string& name);  // return matched record one
+    void append(TT& data);
+    void insert(int index, TT& data);
+    void erase(int index);
+    void display() const;
+
+  private:
+    Node<TT>* m_first_node;
+    int m_size;
+};
+
+template <class TT>
+class CSVReader {
+  public:
+    CSVReader() = default;
+    explicit CSVReader(istream& s);
+    // TT& begin() { return m_chain.get(0); };
+    TT& get(int index) { return m_chain.get(index); };
+    void append(TT& row) { m_chain.append(row); };
+    void display() const { m_chain.display(); };
+    int size() { return m_chain.length(); };
+    void scanToFile(string& filepath);
+
+  private:
+    Chain<TT> m_chain;
+};
 
 template <class TT>
 Chain<TT>::Chain() {
@@ -133,76 +180,6 @@ void Chain<TT>::display() const {
     }
 };
 
-CSVRow::CSVRow(istream& s) {
-    // 参数 s: 单行数据，示例 `012345,2020440002,DK234,2011-6-5`
-    next = nullptr;
-    string cell;
-    getline(s, cell, ',');
-    account = cell;
-    getline(s, cell, ',');
-    identity = cell;
-    getline(s, cell, ',');
-    book = cell;
-    getline(s, cell, ',');
-    date = cell;
-};
-
-bool CSVRow::operator==(const CSVRow& r) const {
-    return (account == r.account && identity == r.identity && book == r.book)
-               ? true
-               : false;
-};
-
-ostream& operator<<(ostream& out, const CSVRow& rr) {
-    out << "account:   " << rr.account << endl;
-    out << "identity:  " << rr.identity << endl;
-    out << "book:      " << rr.book << endl;
-    out << "date:      " << rr.date << endl;
-    return out;
-};
-
-ofstream& operator<<(ofstream& file, const CSVRow& rr) {
-    file << rr.account << ',';
-    file << rr.identity << ',';
-    file << rr.book << ',';
-    file << rr.date << endl;
-    return file;
-};
-
-CSVRowCombi::CSVRowCombi(const CSVRow& row_lend, const CSVRow& row_return) {
-    // 合并两行的数据
-    next = nullptr;
-    account = row_lend.account;
-    identity = row_lend.identity;
-    book = row_lend.book;
-    lend_date = row_lend.date;
-    return_date = row_return.date.empty() ? "尚未归还" : row_return.date;
-};
-
-ostream& operator<<(ostream& out, const CSVRowCombi& rr) {
-    out << "account:      " << rr.account << endl;
-    out << "identity:     " << rr.identity << endl;
-    out << "book:         " << rr.book << endl;
-    out << "lend_date:    " << rr.lend_date << endl;
-    out << "return_date:  " << rr.return_date << endl;
-    return out;
-}
-
-ofstream& operator<<(ofstream& file, const CSVRowCombi& rr) {
-    file << rr.account << ',';
-    file << rr.identity << ',';
-    file << rr.book << ',';
-    file << rr.lend_date << ',';
-    file << rr.return_date << endl;
-    return file;
-};
-
-bool CSVRowCombi::operator==(const CSVRowCombi& r) const {
-    return (account == r.account && identity == r.identity && book == r.book)
-               ? true
-               : false;
-};
-
 template <class TT>
 CSVReader<TT>::CSVReader(istream& s) {
     string cell;
@@ -223,9 +200,3 @@ void CSVReader<TT>::scanToFile(string& filepath) {
     };
     file.close();
 };
-
-template class Chain<CSVRow>;
-template class Chain<CSVRowCombi>;
-
-template class CSVReader<CSVRow>;
-template class CSVReader<CSVRowCombi>;

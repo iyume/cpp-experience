@@ -11,13 +11,20 @@ struct Employee {
     int money = 0;
 
     Employee() = default;
-    explicit Employee(const string& s) {
+    explicit Employee(istream&& sbuf) {
         // 输入形式：3 hu 8 777
-        istringstream sbuf(s);
         sbuf >> code;
         sbuf >> name;
         sbuf >> age;
         sbuf >> money;
+    }
+    explicit Employee(const string& s) : Employee(istringstream(s)) {
+        // 输入形式：3 hu 8 777
+        // istringstream sbuf(s);
+        // sbuf >> code;
+        // sbuf >> name;
+        // sbuf >> age;
+        // sbuf >> money;
     }
     friend ostream& operator<<(ostream& out, const Employee& e) {
         out << e.code << ' ' << e.name << ' ' << e.age << ' ' << e.money
