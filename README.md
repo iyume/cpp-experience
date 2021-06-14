@@ -32,6 +32,10 @@ Stay for update...
 
 `-v`                      Show commands to run and use verbose output
 
+**Header-Only Library**
+
+- separate declaration and definition into two `.hpp` or `.hpp` with `.ipp`, latter will be reported an error by clangd.
+
 # Workspace Setting
 
 `launch.json`
