@@ -1,15 +1,24 @@
-#include <iostream>
 #include <cmath>
+#include <iostream>
 using namespace std;
+using ll = unsigned long long;
 
-typedef long long ll;
+const ll MOD = 1000000007;
 
-#define res 1000000007;
+ll powf(ll a, ll b, ll mod = MOD) {
+    ll ans = 1;
+    for (int i = 0; i < b; i++) {
+        ans = (ans * a) % mod;
+    }
+    ans %= mod;
+    return ans;
+}
 
 int main() {
     ll n = 0;
-    while(cin >> n) {
-        cout << ll(pow(3ll, n / 2)) % res;
+    while (cin >> n) {
+        ll result = powf(3LL, n / 2);
+        printf("%lld", result);
         cout << endl;
     }
     return 0;
