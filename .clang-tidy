@@ -16,6 +16,7 @@ Checks:
 -readability-avoid-const-params-in-decls,
 -readability-magic-numbers,
 -readability-simplify-boolean-expr,
+-readability-identifier-length,
 -llvmlibc*
 '
 

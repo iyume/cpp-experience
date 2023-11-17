@@ -7,8 +7,8 @@
 *.pptx*
 
 # workplace related
-.vscode/
-.vscode.*
+.vscode/*
+!.vscode/settings.json
 compile_flags.txt
 
 # cache
