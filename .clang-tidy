@@ -1,5 +1,6 @@
 Checks:
 '*,
+-llvm-*,
 -cppcoreguidelines-avoid-magic-numbers,
 -cppcoreguidelines-owning-memory,
 -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
