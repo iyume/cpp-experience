@@ -1,36 +1,20 @@
-这个库保存了我大学里 C++ 面向对象、数据结构的作业和实验代码。
-
-文件夹名称带 object 的为对象编程的实验课，大多数为简单的代码。
-
-# Questions
-
-- Empty function declaration occur to object constructor call
-
-As a subsolution, write "void" into parameter in function declaration is thinked as redundant.
-
-In my opinion, separating the obj declaration and callable function is a good way.
-
-> Reference: [https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets](https://stackoverflow.com/questions/180172/default-constructor-with-empty-brackets)
-
-- Usage of Double Ampersand (T&&)
-
-Stay for update...
+This repo stores my code of university courses / OI / self-learning.
 
 # Note
 
 **compile flags (duplicated)**
 
-`-c`                      Only run preprocess, compile, and assemble steps
+`-c` Only run preprocess, compile, and assemble steps
 
-`-S`                      Only run preprocess and compilation steps
+`-S` Only run preprocess and compilation steps
 
-`-g`                      Generate source-level debug information
+`-g` Generate source-level debug information
 
-`-o <file>`               Write output to `<file>`
+`-o <file>` Write output to `<file>`
 
-`-pthread`                Support POSIX threads in generated code
+`-pthread` Support POSIX threads in generated code
 
-`-v`                      Show commands to run and use verbose output
+`-v` Show commands to run and use verbose output
 
 **Header-Only Library**
 
